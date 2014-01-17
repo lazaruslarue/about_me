@@ -4,10 +4,11 @@ body {
 
 polygon { 
   stroke: green;
-  stroke-width: 5px;
-  fill: aliceblue;
+  stroke-width: 1px;
+  fill: grey;
+  padding: 0;
+  margin: 0;
 }
-
 
 .top {
     width: 0;

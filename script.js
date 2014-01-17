@@ -5,7 +5,7 @@ var svgy =  1000;
 svg.attr({'width': svgx, 'height': svgy});
 
 // constants
-hexsize = 50
+hexsize = 33
  
 // find the centers of all our hexagons, we'll return a 'data' element
 // then we'll pass the 'data' to a d3.selectAll to create hexagons
@@ -13,7 +13,7 @@ var hexCenters = function(screenheight, screenwidth, size) {
   var hexheight = size * 2
   var hexwidth = Math.sqrt(3)/2 * size
   var vertical = 3/4 * hexheight
-  var horizontal = 2 * size;
+  var horizontal = hexwidth;
 
   var data = [];
 
@@ -22,7 +22,7 @@ var hexCenters = function(screenheight, screenwidth, size) {
 
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < columns; j++) {
-      data.push({x: horizontal*i, y: vertical*j })
+      data.push({x: (hexwidth)*(i%2) + 2*hexwidth*j , y: vertical*i })
     };
   };
   
@@ -52,3 +52,8 @@ svg.selectAll('polygon').data(hexcount)
   .enter()
   .append('polygon')
   .attr('points', function(d){ return hexPoints(d.x, d.y, hexsize)})
+  
+
+
+
+
