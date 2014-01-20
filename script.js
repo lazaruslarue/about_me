@@ -42,7 +42,7 @@ var hexPoints = function(hx, hy, size) {
 };
 
 // append a single polygon element to the svg :) 
-svg.append('polygon').attr('points', hexPoints(100, 100 ,hexsize));
+// svg.append('polygon').attr('points', hexPoints(100, 100 ,hexsize));
 
 // so how do we append a few polygons? 
 
@@ -51,6 +51,6 @@ var hexcount = hexCenters(svgy, svgx, hexsize);
 svg.selectAll('g').data(hexcount)
   .enter()
   .append('polygon')
-  .attr('points', function(d){ 
+  .attr('points', function(d, i){ 
     return hexPoints(d.x, d.y, hexsize);
   }); 
