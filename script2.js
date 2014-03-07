@@ -67,24 +67,24 @@ var all = svg.selectAll('g').data(shapecount, function(d, i) {
     },
     id: function(d,i){ return 'g'+i;}
   })
-  .transition().duration(1000)
-  .attr({
-    'transform': function(d){
-      return "translate(" + d.x + "," + d.y + ") scale(0.01, 0.01)";
-    }
-  })
-  .transition().duration(1000)
-  .attr({
-    'transform': function(d, i ){
-      return " scale(1, 1) "+ "translate(" + d.x + "," + d.y + ")";
-    }
-  })
-  .transition().duration(1000)
-  .attr({
-    'transform': function(d, i ){
-      return " scale(1, 1) "+ "translate(" + d.x + "," + d.y + ") rotate("+i*19+")";
-    }
-  })
+  // .transition().duration(1000)
+  // .attr({
+  //   'transform': function(d){
+  //     return "translate(" + d.x + "," + d.y + ") scale(0.01, 0.01)";
+  //   }
+  // })
+  // .transition().duration(1000)
+  // .attr({
+  //   'transform': function(d, i ){
+  //     return " scale(1, 1) "+ "translate(" + d.x + "," + d.y + ")";
+  //   }
+  // })
+  // .transition().duration(1000)
+  // .attr({
+  //   'transform': function(d, i ){
+  //     return " scale(1, 1) "+ "translate(" + d.x + "," + d.y + ") rotate("+i*19+")";
+  //   }
+  // })
   ;
 svg.selectAll('g').append('polygon').attr('points', polyNpoints(points, 0,0,insideRadius, outsideRadius));
 
