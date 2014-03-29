@@ -5,11 +5,11 @@ var svgy =  1000;
 svg.attr({'width': svgx, 'height': svgy});
 
 // constants
-hexsize = 50;
+hexsize = 15;
 polyradius = hexsize + 25;
-insideRadius = 50;
-outsideRadius = 50;
-shaperadius = outsideRadius + 10;
+insideRadius = 15;
+outsideRadius = 15;
+shaperadius = outsideRadius + 0;
 points = 6;
 
 // find the centers of all our hexagons, we'll return a 'data' element
@@ -87,10 +87,23 @@ var all = svg.selectAll('g').data(shapecount, function(d, i) {
   // })
   ;
 svg.selectAll('g').append('polygon').attr('points', polyNpoints(points, 0,0,insideRadius, outsideRadius));
-$('polygon').click('on',function(){$(this).css('fill','white')})
+// $('polygon').click('on',function(){$(this).css('fill','white')})
 
-// rotate the thing
-$('polygon').click('on',function(){
+// do something when you click the thing
+d3.selectAll('polygon').on('click',function(){
+  d3.select(this)
+  .transition().duration(500)
+  .attr('transform', function(){return "scale(0, 1)"})
+
+  .transition()
+  .attr('style', 'fill:yellow')
+
+
+  .transition().duration(200)
+  .attr('transform', function(){return "scale(1, 1)"})
+})
+
+d3.selectAll('polygon').on('mouseover',function(){
   d3.select(this)
   .transition().duration(500)
   .attr('transform', function(){return "scale(0, 1)"})
@@ -104,10 +117,9 @@ $('polygon').click('on',function(){
 })
 
 
-// $('#g2').children().attr('style','fill:green')
-// svg.select('#g4').attr('transform',function(){return "rotate(10)"})
 
-// d3.select('g:nth-child(1)').node();
+
+
 var squish = function(gnumber) {
   // body...
   d3.select('g:nth-child('+gnumber+')').node()
