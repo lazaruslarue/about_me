@@ -5,10 +5,10 @@ var svgy =  1000;
 svg.attr({'width': svgx, 'height': svgy});
 
 // constants
-hexsize = 15;
+hexsize = 50;
 polyradius = hexsize + 25;
-insideRadius = 15;
-outsideRadius = 15;
+insideRadius = 50;
+outsideRadius = 50;
 shaperadius = outsideRadius + 0;
 points = 6;
 
@@ -24,10 +24,22 @@ var centers = function(screenheight, screenwidth, size) {
 
   var rows = screenheight / vertical;
   var columns = screenwidth / horizontal;
+  
+  var picker = function(d,i) {
+    d.counter++;
+    if (d.counter === 3) d.counter = 0;
+    return "fill:"+d.color[d.counter%d.color.length];  
+  };
 
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < columns; j++) {
-      data.push({x: (hexwidth)*(i%2) + 2*hexwidth*j , y: vertical*i });
+      data.push({
+        x: (hexwidth)*(i%2) + 2*hexwidth*j,
+        y: vertical*i, 
+        color: ['red', 'white', 'blue'],
+        counter: 0,
+        picker: picker
+      });
     }
   }
 
@@ -37,7 +49,7 @@ var centers = function(screenheight, screenwidth, size) {
 //define points for a <polygon> element that is a hexagon
 var polyNpoints = function(nPoints, hx, hy, insideRad, outsideRad) {
   var points = '';
-  if (nPoints%2) nPoints = nPoints-1
+  if (nPoints%2) nPoints = nPoints-1;
   for (i = 0; i < nPoints; i++){
     angle = 2 * Math.PI / nPoints * ( i +0.5);
     radius = i%2 ? insideRad :outsideRad;
@@ -53,10 +65,10 @@ var polyNpoints = function(nPoints, hx, hy, insideRad, outsideRad) {
 // svg.append('polygon').attr('points',polyNpoints(10, 0,0,hexsize-10, hexsize+100));
 
 // so how do we append a few polygons?
-
 var shapecount = centers(svgy, svgx, shaperadius);
+var colors = ['red', 'white', 'blue'];
 
-var all = svg.selectAll('g').data(shapecount, function(d, i) {
+svg.selectAll('g').data(shapecount, function(d, i) {
   return i;
 })
   .enter()
@@ -67,7 +79,7 @@ var all = svg.selectAll('g').data(shapecount, function(d, i) {
     },
     id: function(d,i){ return 'g'+i;}
   })
-  .transition().duration(100)
+  .transition().duration(100) // this code makes the Hexagons shrink when they're first applied to the SVG
   .attr({
     'transform': function(d){
       return "translate(" + d.x + "," + d.y + ") scale(0.01, 0.01)";
@@ -78,63 +90,42 @@ var all = svg.selectAll('g').data(shapecount, function(d, i) {
     'transform': function(d, i ){
       return " scale(1, 1) "+ "translate(" + d.x + "," + d.y + ")";
     }
-  })
-  // .transition().duration(1000)
-  // .attr({
-  //   'transform': function(d, i ){
-  //     return " scale(1, 1) "+ "translate(" + d.x + "," + d.y + ") rotate("+i*19+")";
-  //   }
-  // })
-  ;
+  });
+
+// stick a shape on every <g>
 svg.selectAll('g').append('polygon').attr('points', polyNpoints(points, 0,0,insideRadius, outsideRadius));
-// $('polygon').click('on',function(){$(this).css('fill','white')})
+
 
 // do something when you click the thing
-d3.selectAll('polygon').on('click',function(){
-  d3.select(this)
-  .transition().duration(500)
-  .attr('transform', function(){return "scale(0, 1)"})
-
-  .transition()
-  .attr('style', 'fill:yellow')
-
-
-  .transition().duration(200)
-  .attr('transform', function(){return "scale(1, 1)"})
-})
-
-d3.selectAll('polygon').on('mouseover',function(){
-  d3.select(this)
-  .transition().duration(500)
-  .attr('transform', function(){return "scale(0, 1)"})
-
-  .transition()
-  .attr('style', 'fill:yellow')
-
-
-  .transition().duration(200)
-  .attr('transform', function(){return "scale(1, 1)"})
-})
-
-
-
-
-
-var squish = function(gnumber) {
-  // body...
-  d3.select('g:nth-child('+gnumber+')').node()
-
-  .attr({
-    'transform': function(d){
-      return "translate(" + d.x + "," + d.y + ") scale(0.01, 0.01)";
-    }
-  })
-  .transition().duration(1000)
-  .attr({
-    'transform': function(d){
-      return "translate(" + d.x + "," + d.y + ") scale(1, 1)";
-    }
-  });
+var changecolor = function(d,i) {
+  console.log(d);
+  d3.select(this).attr({
+    'style': d.picker(d,i)
+  }).data()
+  ;
 };
 
-// squish(3)
+d3.selectAll('polygon').on('click', changecolor);
+var colorpicker = function(d, i) {
+  if (i%2) {
+    return "fill:red";
+  } else {
+    return "fill:white";
+  }
+};
+
+// make them go crazy when you mouseover
+var flipover = function(d,i) {
+  d3.select(this)
+  .transition().duration(500)
+  .attr('transform', function(){return "scale(0, 1)";})
+
+  .transition()
+  .attr('style', colorpicker(d,i))
+
+  .transition().duration(200)
+  .attr('transform', function(){return "scale(1, 1)";});
+};
+
+
+d3.selectAll('polygon').on('mouseover',changecolor);
