@@ -5,11 +5,11 @@ var svgy =  1000;
 svg.attr({'width': svgx, 'height': svgy});
 
 // constants
-hexsize = 50;
+hexsize = 60;
 polyradius = hexsize + 25;
-insideRadius = 50;
-outsideRadius = 50;
-shaperadius = outsideRadius + 0;
+insideRadius = 100;
+outsideRadius = 100;
+shaperadius = outsideRadius - 1;
 points = 6;
 
 // find the centers of all our hexagons, we'll return a 'data' element
@@ -25,7 +25,7 @@ var centers = function(screenheight, screenwidth, size) {
   var rows = screenheight / vertical;
   var columns = screenwidth / horizontal;
   
-  var picker = function(d,i) {
+  var color_assignment = function(d,i) {
     d.counter++;
     if (d.counter === 3) d.counter = 0;
     return "fill:"+d.color[d.counter%d.color.length];  
@@ -34,11 +34,14 @@ var centers = function(screenheight, screenwidth, size) {
   for (var i = 0; i < rows; i++) {
     for (var j = 0; j < columns; j++) {
       data.push({
+        name: ''+j+'_'+i,
         x: (hexwidth)*(i%2) + 2*hexwidth*j,
         y: vertical*i, 
-        color: ['red', 'white', 'blue'],
+        r: i,
+        q: j,
+        color: ['8E8E8E', '525252', '666666', '525252'],
         counter: 0,
-        picker: picker
+        color_assignment: color_assignment
       });
     }
   }
@@ -77,7 +80,7 @@ svg.selectAll('g').data(shapecount, function(d, i) {
     'transform': function(d){
       return "translate(" + d.x + "," + d.y + ")";
     },
-    id: function(d,i){ return 'g'+i;}
+    id: function(d,i){ return d.name;} // we can use this info... it's good stuff
   })
   .transition().duration(100) // this code makes the Hexagons shrink when they're first applied to the SVG
   .attr({
@@ -100,32 +103,24 @@ svg.selectAll('g').append('polygon').attr('points', polyNpoints(points, 0,0,insi
 var changecolor = function(d,i) {
   console.log(d);
   d3.select(this).attr({
-    'style': d.picker(d,i)
+    'style': d.color_assignment(d,i)
   }).data()
   ;
 };
 
-d3.selectAll('polygon').on('click', changecolor);
-var colorpicker = function(d, i) {
-  if (i%2) {
-    return "fill:red";
-  } else {
-    return "fill:white";
-  }
-};
+d3.selectAll('polygon').on('mouseover',changecolor);
 
-// make them go crazy when you mouseover
+// here's a function that will flipover
 var flipover = function(d,i) {
   d3.select(this)
   .transition().duration(500)
   .attr('transform', function(){return "scale(0, 1)";})
 
   .transition()
-  .attr('style', colorpicker(d,i))
+  .attr('style', changecolor(d,i))
 
   .transition().duration(200)
   .attr('transform', function(){return "scale(1, 1)";});
 };
 
-
-d3.selectAll('polygon').on('mouseover',changecolor);
+d3.selectAll('polygon').on('click', flipover);
