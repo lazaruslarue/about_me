@@ -24,11 +24,11 @@ var centers = function(screenheight, screenwidth, size) {
 
   var rows = screenheight / vertical;
   var columns = screenwidth / horizontal;
-  
+
   var color_assignment = function(d,i) {
     d.counter++;
     if (d.counter === 3) d.counter = 0;
-    return "fill:"+d.color[d.counter%d.color.length];  
+    return "fill:"+d.color[d.counter%d.color.length];
   };
 
   for (var i = 0; i < rows; i++) {
@@ -36,7 +36,7 @@ var centers = function(screenheight, screenwidth, size) {
       data.push({
         name: ''+j+'_'+i,
         x: (hexwidth)*(i%2) + 2*hexwidth*j,
-        y: vertical*i, 
+        y: vertical*i,
         r: i,
         q: j,
         color: ['8E8E8E', '525252', '666666', '525252'],
@@ -95,7 +95,7 @@ svg.selectAll('g').data(shapecount, function(d, i) {
     }
   });
 
-// stick a shape on every <g>
+// stick a shape on every <g> element
 svg.selectAll('g').append('polygon').attr('points', polyNpoints(points, 0,0,insideRadius, outsideRadius));
 
 
@@ -112,15 +112,19 @@ d3.selectAll('polygon').on('mouseover',changecolor);
 
 // here's a function that will flipover
 var flipover = function(d,i) {
+  var transform = ''; // TODO: maek this a
+  var translate = '';
+
   d3.select(this)
   .transition().duration(500)
   .attr('transform', function(){return "scale(0, 1)";})
 
-  .transition()
-  .attr('style', changecolor(d,i))
+  // .transition()
+  // .attr('style', changecolor(d,i))
 
   .transition().duration(200)
-  .attr('transform', function(){return "scale(1, 1)";});
+  .attr('transform', function(){return "scale(1, 1)";})
+  ;
 };
 
-d3.selectAll('polygon').on('click', flipover);
+d3.selectAll('g').on('click', flipover);
